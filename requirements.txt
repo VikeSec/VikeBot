@@ -1,0 +1,2 @@
+aiohttp==3.8.1
+py-cord==2.0.0b1

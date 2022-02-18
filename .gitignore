@@ -1,0 +1,9 @@
+# Python is stupid
+**__pycache__/
+
+# VSCode is stupid
+.vscode/
+
+# Secrets
+fly.toml
+config.py
