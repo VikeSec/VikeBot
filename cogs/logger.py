@@ -18,6 +18,7 @@ class Logger(commands.Cog):
         if (
             message.author == self.bot.user
             or message.channel.id == config.logger_channel
+            or before.content == message.content
         ):
             return
 
