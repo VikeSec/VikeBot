@@ -11,7 +11,7 @@ jobs:
     name: Black Lint
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Set up Python 3.10
@@ -34,7 +34,7 @@ jobs:
     name: Isort Lint
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Set up Python 3.10

@@ -12,7 +12,7 @@ jobs:
     name: Deploy app
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Create Config.py
