@@ -2,8 +2,7 @@ name: Fly Deploy
 
 on:
   push:
-    branches:
-      - master
+    branches: [ master ]
 
 env:
   FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
@@ -13,11 +12,14 @@ jobs:
     name: Deploy app
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Create Config.py
-        run: echo '${{ secrets.BOT_CONFIG }}' > config.py
+        run: echo "$BOT_CONFIG" > config.py
+        shell: bash
+        env:
+          BOT_CONFIG: ${{secrets.BOT_CONFIG}}
 
       - name: Deploy to Fly
         uses: superfly/flyctl-actions@1.3
