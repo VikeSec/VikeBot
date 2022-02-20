@@ -22,7 +22,7 @@ jobs:
       - name: Run Black
         uses: psf/black@stable
         with:
-          options: "--check"
+          options: "--check --color"
 
       - name: Diff Black
         uses: psf/black@stable
