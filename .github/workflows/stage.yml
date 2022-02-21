@@ -18,6 +18,12 @@ jobs:
         env:
           BOT_CONFIG: ${{secrets.BOT_CONFIG}}
 
+      - name: Change stage slash commands to have 'z' infront
+        run: >
+          find . -type f -name "*.py" -not -path '*/\.*' -exec
+          sed -i 's/SlashCommandGroup("/SlashCommandGroup("z/g' {} +
+        shell: bash
+
       - name: Build docker image
         run: docker build -t vikaxe/haxebot .
         shell: bash
