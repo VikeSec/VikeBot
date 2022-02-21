@@ -1,5 +1,7 @@
+import asyncio
 import datetime
 import os
+import sys
 
 import discord
 from discord.commands import SlashCommandGroup
@@ -7,6 +9,18 @@ from discord.ext import commands
 from discord.ext.commands import Cog
 
 import config
+
+
+class ForwardOutput(object):
+    def __init__(self, bot):
+        self.bot = bot
+
+    def write(self, data):
+        if len(data) <= 1:
+            return
+        channel = self.bot.get_channel(config.stage_channel)
+        loop = asyncio.get_event_loop()
+        loop.create_task(channel.send(f"```bash\n{data}\n```"))
 
 
 class Stage(Cog):
@@ -42,4 +56,8 @@ class Stage(Cog):
 def setup(bot):
     if os.environ.get("BOT_ENV", "") != "staging":
         return
-    bot.add_cog(Stage(bot))
+
+    cog = Stage(bot)
+    bot.add_cog(cog)
+
+    sys.stdout = sys.stderr = ForwardOutput(cog.bot)
