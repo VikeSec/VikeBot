@@ -32,6 +32,12 @@ class Stage(Cog):
         channel = self.bot.get_channel(config.stage_channel)
         await channel.purge(limit=10000)
 
+        await asyncio.sleep(config.staging_timeout)
+
+        channel = self.bot.get_channel(config.stage_channel)
+        await channel.send(embed=await self.shutdown_embed())
+        await self.bot.close()
+
     stage = SlashCommandGroup("stage", "StageBot commands")
 
     @stage.command(description="Shutdown StageBot")
