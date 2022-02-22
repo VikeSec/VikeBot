@@ -9,6 +9,7 @@ from discord.ext import commands
 from discord.ext.commands import Cog
 
 import config
+from cogs.utils.info import memory, py_ver, uptime
 
 
 class ForwardOutput(object):
@@ -32,25 +33,35 @@ class Stage(Cog):
         channel = self.bot.get_channel(config.stage_channel)
         await channel.purge(limit=10000)
 
+        await channel.send(embed=self.info_embed())
+
         await asyncio.sleep(config.staging_timeout)
 
-        channel = self.bot.get_channel(config.stage_channel)
-        await channel.send(embed=await self.shutdown_embed())
+        await channel.send(embed=self.info_embed())
         await self.bot.close()
 
     stage = SlashCommandGroup("stage", "StageBot commands")
 
     @stage.command(description="Shutdown StageBot")
     async def shutdown(self, ctx: commands.Context):
-        await ctx.respond(embed=await self.shutdown_embed())
+        await ctx.respond(embed=self.info_embed())
         await self.bot.close()
 
-    async def shutdown_embed(self):
-        uptime = str(datetime.datetime.utcnow() - self.bot.start_time)[2:][:5]
-        embed = discord.Embed(title="StageBot Shutting Down")
+    def info_embed(self):
+        embed = discord.Embed(title="StageBot Status")
+        embed.add_field(
+            name="Memory",
+            value=f"```py\n{memory()}```",
+            inline=True,
+        )
+        embed.add_field(
+            name="Python Version",
+            value=f"```py\n{py_ver()}```",
+            inline=True,
+        )
         embed.add_field(
             name="Uptime",
-            value=f"```{uptime}```",
+            value=f"```\n{uptime(self.bot.start_time)}```",
             inline=True,
         )
         embed.set_footer(text=config.bot_name, icon_url=self.bot.user.avatar.url)
