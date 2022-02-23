@@ -9,7 +9,7 @@ from discord.ext import commands
 from discord.ext.commands import Cog
 
 import config
-from cogs.utils.info import memory, py_ver, uptime
+from .utils.info import memory, py_ver, uptime
 
 
 class ForwardOutput(object):
