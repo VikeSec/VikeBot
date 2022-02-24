@@ -60,13 +60,26 @@ jobs:
     name: Trivy Container Analysis
     runs-on: ubuntu-latest
     steps:
+      - name: Setup HoneyComb
+        uses: kvrhdn/gha-buildevents@v1
+        with:
+          apikey: ${{ secrets.BUILDEVENTS_APIKEY }}
+          dataset: ${{ env.environment }}-Discord
+          job-status: ${{ job.status }}
+          matrix-key: ${{ matrix.language }}
+
+      - run: echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
       - name: Checkout code
         uses: actions/checkout@v2
+      - run: buildevents step $TRACE_ID 'actions/checkout@v2' $STEP_START 'Checkout Code'
 
-      - name: Build an image from Dockerfile
+      - run: echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
+      - name: Build Docker image
         run: docker build -t vikaxe/haxebot:${{ github.sha }} .
+      - run: buildevents step $TRACE_ID 'docker/build' $STEP_START 'Build Docker Image'
 
-      - name: Run Trivy vulnerability scanner
+      - run: echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
+      - name: Trivy vulnerability scan
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: 'vikaxe/haxebot:${{ github.sha }}'
@@ -75,9 +88,12 @@ jobs:
           exit-code: '1'
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
+      - run: buildevents step $TRACE_ID 'aquasecurity/trivy-action' $STEP_START 'Trivy vulnerability scan'
 
-      - name: Upload Trivy scan results to GitHub Security tab
+      - run: echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
+      - name: Upload Trivy scan results
         uses: github/codeql-action/upload-sarif@v1
         if: always()
         with:
           sarif_file: 'trivy-results.sarif'
+      - run: buildevents step $TRACE_ID 'github/codeql-action/upload-sarif@v1' $STEP_START 'Upload Trivy scan results'
