@@ -12,12 +12,10 @@ class Logger(commands.Cog):
 
     @commands.Cog.listener("on_message_edit")
     async def on_message_edit(self, before, message):
-        if not config.bot_name:
-            return
-
         if (
             message.author == self.bot.user
             or message.channel.id == config.logger_channel
+            or before.content == message.content
         ):
             return
 
@@ -45,9 +43,6 @@ class Logger(commands.Cog):
 
     @commands.Cog.listener("on_message_delete")
     async def on_message_delete(self, message):
-        if not config.bot_name:
-            return
-
         if (
             message.author == self.bot.user
             or message.channel.id == config.logger_channel
@@ -76,4 +71,6 @@ class Logger(commands.Cog):
 
 
 def setup(bot):
+    if not hasattr(config, "logger_channel"):
+        return
     bot.add_cog(Logger(bot))
