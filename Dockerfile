@@ -4,6 +4,7 @@ WORKDIR /usr/src/app
 
 RUN apt update && \
     apt upgrade -y && \
+    apt install gcc &&
     rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt ./
