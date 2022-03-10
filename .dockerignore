@@ -1,0 +1,6 @@
+**/*
+!requirements.txt
+!cogs/
+!utils/
+!bot.py
+!config.py

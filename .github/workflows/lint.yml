@@ -6,55 +6,74 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  environment: "${{ github.ref == 'refs/heads/master' && 'Production' || 'Dev' }}"
+
 jobs:
   black:
     name: Black Lint
     runs-on: ubuntu-latest
     steps:
+      - name: Setup HoneyComb
+        uses: kvrhdn/gha-buildevents@v1
+        with:
+          apikey: ${{ secrets.BUILDEVENTS_APIKEY }}
+          dataset: ${{ env.environment }}-Discord
+          job-status: ${{ job.status }}
+
+      - run: echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
       - name: Checkout code
         uses: actions/checkout@v2
+      - run: buildevents step $TRACE_ID 'actions/checkout@v2' $STEP_START 'Checkout Code'
 
+      - run: echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
       - name: Set up Python 3.10
         uses: actions/setup-python@v2
         with:
           python-version: "3.10"
+      - run: buildevents step $TRACE_ID 'actions/setup-python@v2:3.10' $STEP_START 'Setup Python 3.10'
 
-      - name: Run Black
+      - run: echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
+      - name: Black Lint
         uses: psf/black@stable
         with:
           options: "--check"
-
-      - name: Diff Black
-        uses: psf/black@stable
-        if: failure()
-        with:
-          options: "--check --diff --color"
-
+      - run: buildevents step $TRACE_ID 'psf/black@stable' $STEP_START 'Black Lint'
+        if: always()
   isort:
     name: Isort Lint
     runs-on: ubuntu-latest
     steps:
+      - name: Setup HoneyComb
+        uses: kvrhdn/gha-buildevents@v1
+        with:
+          apikey: ${{ secrets.BUILDEVENTS_APIKEY }}
+          dataset: ${{ env.environment }}-Discord
+          job-status: ${{ job.status }}
+
+      - run: echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
       - name: Checkout code
         uses: actions/checkout@v2
+      - run: buildevents step $TRACE_ID 'actions/checkout@v2' $STEP_START 'Checkout Code'
 
+      - run: echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
       - name: Set up Python 3.10
         uses: actions/setup-python@v2
         with:
           python-version: "3.10"
+      - run: buildevents step $TRACE_ID 'actions/setup-python@v2:3.10' $STEP_START 'Setup Python 3.10'
 
+      - run: echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
       - name: Create Config.py
         run: touch config.py
         shell: bash
+      - run: buildevents step $TRACE_ID 'touch' $STEP_START 'Create Config.py'
 
-      - name: Run Isort
+      - run: echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
+      - name: Isort Lint
         uses: isort/isort-action@v0.1.0
         with:
           sortPaths: "**/*.py"
           configuration: "--check --color"
-
-      - name: Diff Isort
-        uses: isort/isort-action@v0.1.0
-        if: failure()
-        with:
-          sortPaths: "**/*.py"
-          configuration: "--check --diff --color"
+      - run: buildevents step $TRACE_ID 'isort/isort-action@v0.1.0' $STEP_START 'Isort Lint'
+        if: always()
