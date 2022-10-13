@@ -33,4 +33,4 @@ jobs:
         shell: bash
         continue-on-error: true
         env:
-          STAGE_TOKEN: ${{secrets.STAGE_TOKEN}}
+          STAGE_TOKEN: ${{ secrets.BOT_API_TOKEN }}
