@@ -9,12 +9,13 @@ on:
     - cron: "0 8 * * 1"
 
 env:
-  environment: "${{ github.ref == 'refs/heads/master' && 'Production' || 'Dev' }}"
+  environment: "${{ github.ref == 'refs/heads/master' && 'prod' || 'stage' }}"
 
 jobs:
   codeql:
     name: CodeQL Analysis
     runs-on: ubuntu-latest
+    environment: ${{ env.environment }}
     permissions:
       actions: read
       contents: read
@@ -43,6 +44,7 @@ jobs:
   trivy:
     name: Trivy Container Analysis
     runs-on: ubuntu-latest
+    environment: ${{ env.environment }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2

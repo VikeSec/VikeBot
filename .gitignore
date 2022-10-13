@@ -7,3 +7,4 @@
 # Secrets
 fly.toml
 config.py
+.env
