@@ -10,6 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: prod
+      url: https://vikesec.ca/discord
+    concurrency:
+      group: "prod"
+      cancel-in-progress: true
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
