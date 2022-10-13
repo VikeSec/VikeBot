@@ -15,7 +15,8 @@ jobs:
   codeql:
     name: CodeQL Analysis
     runs-on: ubuntu-latest
-    environment: ${{ env.environment }}
+    environment:
+      name: ${{ env.environment }}
     permissions:
       actions: read
       contents: read
@@ -44,7 +45,8 @@ jobs:
   trivy:
     name: Trivy Container Analysis
     runs-on: ubuntu-latest
-    environment: ${{ env.environment }}
+    environment:
+      name: ${{ env.environment }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2

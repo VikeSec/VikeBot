@@ -4,14 +4,11 @@ on:
   pull_request:
     branches: [master]
 
-env:
-  environment: "${{ github.ref == 'refs/heads/master' && 'prod' || 'stage' }}"
-
 jobs:
   stagebot:
     name: Run StageBot
     runs-on: ubuntu-latest
-    environment: ${{ env.environment }}
+    environment: "stage"
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
