@@ -15,6 +15,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Create Config.py
         run: echo "$BOT_CONFIG" > config.py
         shell: bash
         env:
