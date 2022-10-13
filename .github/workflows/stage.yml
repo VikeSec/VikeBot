@@ -2,7 +2,7 @@ name: Staging
 
 on:
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 env:
   environment: "${{ github.ref == 'refs/heads/master' && 'Production' || 'Dev' }}"
@@ -12,19 +12,9 @@ jobs:
     name: Run StageBot
     runs-on: ubuntu-latest
     steps:
-      - name: Setup HoneyComb
-        uses: kvrhdn/gha-buildevents@v1
-        with:
-          apikey: ${{ secrets.BUILDEVENTS_APIKEY }}
-          dataset: ${{ env.environment }}-Discord
-          job-status: ${{ job.status }}
-
-      - run: echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
       - name: Checkout code
         uses: actions/checkout@v2
-      - run: buildevents step $TRACE_ID 'actions/checkout@v2' $STEP_START 'Checkout Code'
 
-      - name: Create Config.py
         run: echo "$BOT_CONFIG" > config.py
         shell: bash
         env:
@@ -36,16 +26,12 @@ jobs:
           sed -i 's/SlashCommandGroup("/SlashCommandGroup("z/g' {} +
         shell: bash
 
-      - run: echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
       - name: Build Docker image
         run: docker build -t vikaxe/haxebot:${{ github.sha }} .
-      - run: buildevents step $TRACE_ID 'docker/build' $STEP_START 'Build Docker Image'
 
-      - run: echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
       - name: Run StageBot
         run: docker run -e "BOT_TOKEN=$STAGE_TOKEN" -e "BOT_ENV=staging" vikaxe/haxebot 1>/dev/null 2>&1
         shell: bash
         continue-on-error: true
         env:
           STAGE_TOKEN: ${{secrets.STAGE_TOKEN}}
-      - run: buildevents step $TRACE_ID 'docker/run' $STEP_START 'Run Stagebot'
