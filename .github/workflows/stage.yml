@@ -39,3 +39,12 @@ jobs:
         continue-on-error: true
         env:
           STAGE_TOKEN: ${{ secrets.BOT_API_TOKEN }}
+
+      - name: Mark environment as deactivated
+        uses: bobheadxi/deployments@v1.3.0
+        if: always()
+        with:
+          step: deactivate-env
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: "stage"
+          desc: Stagebot was stopped
