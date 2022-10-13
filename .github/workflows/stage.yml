@@ -48,3 +48,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           env: "stage"
           desc: Stagebot was stopped
+          auto_inactive: true
