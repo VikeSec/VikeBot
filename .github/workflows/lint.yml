@@ -10,11 +10,21 @@ env:
   run_env: "${{ github.ref == 'refs/heads/master' && 'prod' || 'stage' }}"
 
 jobs:
+  setenv:
+    name: Black Lint
+    runs-on: ubuntu-latest
+    outputs:
+      env: ${{ steps.setenv.outputs.env }}
+    steps:
+      - id: setenv
+        run: echo "::set-output name=env::prod"
+
   black:
     name: Black Lint
     runs-on: ubuntu-latest
+    needs: setenv
     environment:
-      name: ${{ env.run_env }}
+      name: ${{ needs.setenv.outputs.env }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -32,8 +42,9 @@ jobs:
   isort:
     name: Isort Lint
     runs-on: ubuntu-latest
+    needs: setenv
     environment:
-      name: ${{ env.run_env }}
+      name: ${{ needs.setenv.outputs.env }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
