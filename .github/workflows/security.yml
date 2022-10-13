@@ -1,20 +1,19 @@
-name: "Security"
+name: Security
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
   schedule:
-    - cron: '0 8 * * 1'
-
-env:
-  environment: "${{ github.ref == 'refs/heads/master' && 'Production' || 'Dev' }}"
+    - cron: "0 8 * * 1"
 
 jobs:
   codeql:
     name: CodeQL Analysis
     runs-on: ubuntu-latest
+    environment:
+      name: ${{ env.environment }}
     permissions:
       actions: read
       contents: read
@@ -23,77 +22,47 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'python' ]
+        language: ["python"]
 
     steps:
-      - name: Setup HoneyComb
-        uses: kvrhdn/gha-buildevents@v1
-        with:
-          apikey: ${{ secrets.BUILDEVENTS_APIKEY }}
-          dataset: ${{ env.environment }}-Discord
-          job-status: ${{ job.status }}
-          matrix-key: ${{ matrix.language }}
-
-      - run: echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
       - name: Checkout code
-        uses: actions/checkout@v2
-      - run: buildevents step $TRACE_ID 'actions/checkout@v2' $STEP_START 'Checkout Code'
+        uses: actions/checkout@v3
 
-      - run: echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v1
         with:
           languages: ${{ matrix.language }}
-      - run: buildevents step $TRACE_ID 'github/codeql-action/init@v1' $STEP_START 'Initialize CodeQL'
 
-      - run: echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
       - name: CodeQL Autobuild
         uses: github/codeql-action/autobuild@v1
-      - run: buildevents step $TRACE_ID 'github/codeql-action/autobuild@v1' $STEP_START 'CodeQL Autobuild'
 
-      - run: echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v1
-      - run: buildevents step $TRACE_ID 'github/codeql-action/analyze@v1' $STEP_START 'Perform CodeQL Analysis'
 
   trivy:
     name: Trivy Container Analysis
     runs-on: ubuntu-latest
+    environment:
+      name: ${{ env.environment }}
     steps:
-      - name: Setup HoneyComb
-        uses: kvrhdn/gha-buildevents@v1
-        with:
-          apikey: ${{ secrets.BUILDEVENTS_APIKEY }}
-          dataset: ${{ env.environment }}-Discord
-          job-status: ${{ job.status }}
-          matrix-key: ${{ matrix.language }}
-
-      - run: echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
       - name: Checkout code
-        uses: actions/checkout@v2
-      - run: buildevents step $TRACE_ID 'actions/checkout@v2' $STEP_START 'Checkout Code'
+        uses: actions/checkout@v3
 
-      - run: echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
       - name: Build Docker image
-        run: docker build -t vikaxe/haxebot:${{ github.sha }} .
-      - run: buildevents step $TRACE_ID 'docker/build' $STEP_START 'Build Docker Image'
+        run: docker build -t vikaxe/vikebot:${{ github.sha }} .
 
-      - run: echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
       - name: Trivy vulnerability scan
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'vikaxe/haxebot:${{ github.sha }}'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-          exit-code: '1'
+          image-ref: "vikaxe/vikebot:${{ github.sha }}"
+          format: "sarif"
+          output: "trivy-results.sarif"
+          exit-code: "1"
           ignore-unfixed: true
-          severity: 'CRITICAL,HIGH'
-      - run: buildevents step $TRACE_ID 'aquasecurity/trivy-action' $STEP_START 'Trivy vulnerability scan'
+          severity: "CRITICAL,HIGH"
 
-      - run: echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
       - name: Upload Trivy scan results
         uses: github/codeql-action/upload-sarif@v1
         if: always()
         with:
-          sarif_file: 'trivy-results.sarif'
-      - run: buildevents step $TRACE_ID 'github/codeql-action/upload-sarif@v1' $STEP_START 'Upload Trivy scan results'
+          sarif_file: "trivy-results.sarif"
