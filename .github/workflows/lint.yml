@@ -31,7 +31,7 @@ jobs:
         uses: MNThomson/otel-action@master
         with:
           endpoint: "https://api.honeycomb.io/"
-          headers: "x-honeycomb-team=${{ env.HC_API_TOKEN }}"
+          headers: "x-honeycomb-team:${{ env.HC_API_TOKEN }}"
           service_name: "VikeBot"
 
   isort:
