@@ -6,9 +6,6 @@ on:
   pull_request:
     branches: [master]
 
-env:
-  run_env: "${{ github.ref == 'refs/heads/master' && 'prod' || 'stage' }}"
-
 jobs:
   setenv:
     name: Black Lint
@@ -17,7 +14,7 @@ jobs:
       env: ${{ steps.setenv.outputs.env }}
     steps:
       - id: setenv
-        run: echo "::set-output name=env::prod"
+        run: echo "::set-output name=env::${{ github.ref == 'refs/heads/master' && 'prod' || 'stage' }"
 
   black:
     name: Black Lint
