@@ -1,0 +1,21 @@
+name: OTEL
+
+on:
+  workflow_run:
+    workflows: [Fly Deploy, Stage, Lint, Security]
+    types: [completed]
+
+env:
+  HC_API_TOKEN: ${{ github.ref == 'refs/heads/master' && secrets.HC_PROD || secrets.HC_STAGE }}"
+
+jobs:
+  black:
+    name: Upload OTEL traces
+    runs-on: ubuntu-latest
+    steps:
+      - name: Upload OTEL traces
+        uses: MNThomson/otel-action@master
+        with:
+          endpoint: "https://api.honeycomb.io/"
+          headers: "x-honeycomb-team:${{ env.HC_API_TOKEN }}"
+          service_name: "VikeBot"

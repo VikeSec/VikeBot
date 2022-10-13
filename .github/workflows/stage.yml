@@ -1,4 +1,4 @@
-name: Staging
+name: Stage
 
 on:
   pull_request:
@@ -16,7 +16,7 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Create Config.py
         run: echo "$BOT_CONFIG" > config.py
@@ -31,10 +31,10 @@ jobs:
         shell: bash
 
       - name: Build Docker image
-        run: docker build -t vikaxe/haxebot:${{ github.sha }} .
+        run: docker build -t vikaxe/vikebot:${{ github.sha }} .
 
       - name: Run StageBot
-        run: docker run -e "BOT_TOKEN=$STAGE_TOKEN" -e "BOT_ENV=staging" vikaxe/haxebot 1>/dev/null 2>&1
+        run: docker run -e "BOT_TOKEN=$STAGE_TOKEN" -e "BOT_ENV=staging" vikaxe/vikebot 1>/dev/null 2>&1
         shell: bash
         continue-on-error: true
         env:

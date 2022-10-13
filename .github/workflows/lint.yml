@@ -6,16 +6,13 @@ on:
   pull_request:
     branches: [master]
 
-env:
-  HC_API_TOKEN: ${{ github.ref == 'refs/heads/master' && secrets.HC_PROD || secrets.HC_STAGE }}"
-
 jobs:
   black:
     name: Black Lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up Python 3.10
         uses: actions/setup-python@v2
@@ -27,19 +24,12 @@ jobs:
         with:
           options: "--check"
 
-      - name: Upload OTEL traces
-        uses: MNThomson/otel-action@master
-        with:
-          endpoint: "https://api.honeycomb.io/"
-          headers: "x-honeycomb-team:${{ env.HC_API_TOKEN }}"
-          service_name: "VikeBot"
-
   isort:
     name: Isort Lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up Python 3.10
         uses: actions/setup-python@v2
