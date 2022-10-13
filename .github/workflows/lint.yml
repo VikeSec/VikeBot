@@ -7,7 +7,7 @@ on:
     branches: [master]
 
 env:
-  HC_API_TOKEN: ${{ github.ref == 'refs/heads/master' && ${{ secrets.HC_PROD }} || ${{ secrets.HC_STAGE }} }"
+  HC_API_TOKEN: ${{ github.ref == 'refs/heads/master' && secrets.HC_PROD || secrets.HC_STAGE }"
 
 jobs:
   black:
