@@ -33,6 +33,5 @@ jobs:
       - name: Run StageBot
         run: docker run -e "BOT_TOKEN=$STAGE_TOKEN" -e "BOT_ENV=staging" vikesec/vikebot 1>/dev/null 2>&1
         shell: bash
-        continue-on-error: true
         env:
           STAGE_TOKEN: ${{secrets.STAGE_TOKEN}}
