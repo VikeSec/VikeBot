@@ -78,4 +78,4 @@ def setup(bot):
     cog = Stage(bot)
     bot.add_cog(cog)
 
-    # sys.stdout = sys.stderr = ForwardOutput(cog.bot)
+    sys.stdout = sys.stderr = ForwardOutput(cog.bot)
