@@ -42,6 +42,7 @@ jobs:
         with:
           step: finish
           token: ${{ secrets.GITHUB_TOKEN }}
+          status: success
           env: "stage"
           desc: Stagebot deployed
 
