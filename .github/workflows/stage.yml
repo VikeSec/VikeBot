@@ -12,11 +12,6 @@ jobs:
     name: Run StageBot
     runs-on: ubuntu-latest
     steps:
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-        env:
-          STAGE_TOKEN: ${{secrets.STAGE_TOKEN}}
-
       - name: Setup HoneyComb
         uses: kvrhdn/gha-buildevents@v1
         with:
