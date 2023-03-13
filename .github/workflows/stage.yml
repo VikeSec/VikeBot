@@ -2,7 +2,7 @@ name: Staging
 
 on:
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 env:
   environment: "${{ github.ref == 'refs/heads/master' && 'Production' || 'Dev' }}"
@@ -18,6 +18,11 @@ jobs:
           apikey: ${{ secrets.BUILDEVENTS_APIKEY }}
           dataset: ${{ env.environment }}-Discord
           job-status: ${{ job.status }}
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        env:
+          STAGE_TOKEN: ${{secrets.STAGE_TOKEN}}
 
       - run: echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
       - name: Checkout code
