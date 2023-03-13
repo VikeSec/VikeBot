@@ -31,7 +31,7 @@ jobs:
         run: docker build -t vikesec/vikebot:${{ github.sha }} .
 
       - name: Run StageBot
-        run: docker run -e "BOT_TOKEN=$STAGE_TOKEN" -e "BOT_ENV=staging" vikesec/vikebot
+        run: docker run -e "BOT_TOKEN=$STAGE_TOKEN" -e "BOT_ENV=staging" vikesec/vikebot:${{ github.sha }}
         shell: bash
         env:
           STAGE_TOKEN: ${{secrets.STAGE_TOKEN}}
