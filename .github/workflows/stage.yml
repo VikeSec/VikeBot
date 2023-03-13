@@ -28,10 +28,10 @@ jobs:
         shell: bash
 
       - name: Build Docker image
-        run: docker build -t vikaxe/haxebot:${{ github.sha }} .
+        run: docker build -t vikesec/vikebot:${{ github.sha }} .
 
       - name: Run StageBot
-        run: docker run -e "BOT_TOKEN=$STAGE_TOKEN" -e "BOT_ENV=staging" vikaxe/haxebot 1>/dev/null 2>&1
+        run: docker run -e "BOT_TOKEN=$STAGE_TOKEN" -e "BOT_ENV=staging" vikesec/vikebot 1>/dev/null 2>&1
         shell: bash
         continue-on-error: true
         env:

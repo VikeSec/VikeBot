@@ -48,12 +48,12 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build Docker image
-        run: docker build -t vikaxe/haxebot:${{ github.sha }} .
+        run: docker build -t vikesec/vikebot:${{ github.sha }} .
 
       - name: Trivy vulnerability scan
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: "vikaxe/haxebot:${{ github.sha }}"
+          image-ref: "vikesec/vikebot:${{ github.sha }}"
           format: "sarif"
           output: "trivy-results.sarif"
           exit-code: "1"

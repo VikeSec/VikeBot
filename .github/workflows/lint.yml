@@ -47,4 +47,4 @@ jobs:
         uses: isort/isort-action@v0.1.0
         with:
           sortPaths: "**/*.py"
-          configuration: "--check --color"
+          configuration: "--check"
