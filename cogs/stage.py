@@ -39,14 +39,14 @@ class Stage(Cog):
         await asyncio.sleep(config.staging_timeout)
 
         await channel.send(embed=self.info_embed())
-        await self.bot.logout()
+        await self.bot.shutdown()
 
     stage = SlashCommandGroup("stage", "StageBot commands")
 
     @stage.command(description="Shutdown StageBot")
     async def shutdown(self, ctx: commands.Context):
         await ctx.respond(embed=self.info_embed())
-        await self.bot.logout()
+        await self.bot.shutdown()
 
     def info_embed(self):
         embed = discord.Embed(title="StageBot Status")
@@ -78,4 +78,4 @@ def setup(bot):
     cog = Stage(bot)
     bot.add_cog(cog)
 
-    sys.stdout = sys.stderr = ForwardOutput(cog.bot)
+    # sys.stdout = sys.stderr = ForwardOutput(cog.bot)

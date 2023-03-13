@@ -43,3 +43,7 @@ class Vikebot(commands.Bot):
 
     async def on_ready(self):
         print(f"Logged in as {self.user}")
+
+    async def shutdown(self):
+        await self.session.close()
+        await self.close()
