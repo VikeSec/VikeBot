@@ -28,35 +28,11 @@ jobs:
         env:
           BOT_CONFIG: ${{secrets.BOT_CONFIG}}
 
-      - name: Change stage slash commands to have 'z' infront
-        run: >
-          find . -type f -name "*.py" -not -path '*/\.*' -exec
-          sed -i 's/SlashCommandGroup("/SlashCommandGroup("z/g' {} +
-        shell: bash
-
       - name: Build Docker image
         run: docker build -t vikesec/vikebot:${{ github.sha }} .
-
-      - name: Mark environment as finished
-        uses: bobheadxi/deployments@v1.4.0
-        with:
-          step: finish
-          token: ${{ secrets.GITHUB_TOKEN }}
-          status: success
-          env: "stage"
-          desc: Stagebot deployed
 
       - name: Run StageBot
         run: docker run -e "BOT_TOKEN=$STAGE_TOKEN" -e "BOT_ENV=staging" vikesec/vikebot:${{ github.sha }}
         shell: bash
         env:
           STAGE_TOKEN: ${{secrets.BOT_API_TOKEN}}
-
-      - name: Mark environment as deactivated
-        uses: bobheadxi/deployments@v1.4.0
-        if: always()
-        with:
-          step: deactivate-env
-          token: ${{ secrets.GITHUB_TOKEN }}
-          env: "stage"
-          desc: Stagebot was stopped
