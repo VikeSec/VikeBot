@@ -37,6 +37,14 @@ jobs:
       - name: Build Docker image
         run: docker build -t vikesec/vikebot:${{ github.sha }} .
 
+      - name: Mark environment as finished
+        uses: bobheadxi/deployments@v1.4.0
+        with:
+          step: finish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: "stage"
+          desc: Stagebot deployed
+
       - name: Run StageBot
         run: docker run -e "BOT_TOKEN=$STAGE_TOKEN" -e "BOT_ENV=staging" vikesec/vikebot:${{ github.sha }}
         shell: bash
@@ -44,7 +52,7 @@ jobs:
           STAGE_TOKEN: ${{secrets.BOT_API_TOKEN}}
 
       - name: Mark environment as deactivated
-        uses: bobheadxi/deployments@v1.3.0
+        uses: bobheadxi/deployments@v1.4.0
         if: always()
         with:
           step: deactivate-env
