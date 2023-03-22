@@ -11,18 +11,16 @@ jobs:
   stagebot:
     name: Run StageBot
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: "stage"
+      url: https://vikesec.ca/discord
+    concurrency:
+      group: "stage"
+      cancel-in-progress: true
     steps:
-      - name: Setup HoneyComb
-        uses: kvrhdn/gha-buildevents@v1
-        with:
-          apikey: ${{ secrets.BUILDEVENTS_APIKEY }}
-          dataset: ${{ env.environment }}-Discord
-          job-status: ${{ job.status }}
-
-      - run: echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
       - name: Checkout code
         uses: actions/checkout@v2
-      - run: buildevents step $TRACE_ID 'actions/checkout@v2' $STEP_START 'Checkout Code'
 
       - name: Create Config.py
         run: echo "$BOT_CONFIG" > config.py
@@ -30,22 +28,11 @@ jobs:
         env:
           BOT_CONFIG: ${{secrets.BOT_CONFIG}}
 
-      - name: Change stage slash commands to have 'z' infront
-        run: >
-          find . -type f -name "*.py" -not -path '*/\.*' -exec
-          sed -i 's/SlashCommandGroup("/SlashCommandGroup("z/g' {} +
-        shell: bash
-
-      - run: echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
       - name: Build Docker image
-        run: docker build -t vikaxe/haxebot:${{ github.sha }} .
-      - run: buildevents step $TRACE_ID 'docker/build' $STEP_START 'Build Docker Image'
+        run: docker build -t vikesec/vikebot:${{ github.sha }} .
 
-      - run: echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
       - name: Run StageBot
-        run: docker run -e "BOT_TOKEN=$STAGE_TOKEN" -e "BOT_ENV=staging" vikaxe/haxebot 1>/dev/null 2>&1
+        run: docker run -e "BOT_TOKEN=$STAGE_TOKEN" -e "BOT_ENV=staging" vikesec/vikebot:${{ github.sha }}
         shell: bash
-        continue-on-error: true
         env:
-          STAGE_TOKEN: ${{secrets.STAGE_TOKEN}}
-      - run: buildevents step $TRACE_ID 'docker/run' $STEP_START 'Run Stagebot'
+          STAGE_TOKEN: ${{secrets.BOT_API_TOKEN}}
