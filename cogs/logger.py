@@ -73,4 +73,5 @@ class Logger(commands.Cog):
 def setup(bot):
     if not hasattr(config, "logger_channel"):
         return
+
     bot.add_cog(Logger(bot))
