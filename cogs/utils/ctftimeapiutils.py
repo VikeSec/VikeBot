@@ -1,18 +1,24 @@
 import requests
 
+import config
+
 baseurl = 'https://ctftime.org/api/v1/'
 
-def get_event_info(event_id):
-    url = baseurl + 'events/' + event_id + '/'
+def fetch_event_info(event_id):
+    url = baseurl + 'events/' + str(event_id) + '/'
+    headers = {'user-agent': config.user_agent}
+
+    response = requests.get(url, headers=headers)
+    response.raise_for_status() # Throws exception when code >= 400
     
-    response = requests.get(url)
     return response.json()
 
-def get_upcoming_events(num_events):
+def fetch_upcoming_events(num_events):
     url = baseurl + 'events/'
-    params = {'limit': num_events}
-
-    response = requests.get(url, params)
+    params = {'limit': str(num_events)}
+    headers = {'user-agent': config.user_agent}
+    
+    response = requests.get(url, params=params, headers=headers)
+    response.raise_for_status() # Throws exception when code >= 400
+    
     return response.json()
-
-
