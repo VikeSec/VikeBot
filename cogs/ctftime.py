@@ -1,9 +1,11 @@
-import requests
+from datetime import datetime
+
 import discord
+import requests
 from discord.ext import commands
+
 from .utils.ctftimeapiutils import fetch_event_details, fetch_upcoming_events
 
-from datetime import datetime, tzinfo
 
 class CFTTime(commands.Cog):
 
