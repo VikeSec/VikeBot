@@ -4,7 +4,7 @@ import config
 
 baseurl = 'https://ctftime.org/api/v1/'
 
-def fetch_event_info(event_id):
+def fetch_event_details(event_id):
     url = baseurl + 'events/' + str(event_id) + '/'
     headers = {'user-agent': config.user_agent}
 
