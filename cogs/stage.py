@@ -31,21 +31,28 @@ class Stage(Cog):
 
     @Cog.listener()
     async def on_ready(self):
+        self.stdout, self.stderr = sys.stdout, sys.stderr
+        sys.stdout = sys.stderr = ForwardOutput(self.bot)
+
         channel = self.bot.get_channel(config.stage_channel)
-        await channel.purge(limit=10000)
+        await channel.purge(limit=250)
 
         await channel.send(embed=self.info_embed())
 
         await asyncio.sleep(config.staging_timeout)
 
         await channel.send(embed=self.info_embed())
-        await self.bot.shutdown()
+        await self.handle_shudown()
 
     stage = SlashCommandGroup("stage", "StageBot commands")
 
     @stage.command(description="Shutdown StageBot")
     async def shutdown(self, ctx: commands.Context):
         await ctx.respond(embed=self.info_embed())
+        await self.handle_shudown()
+
+    async def handle_shudown(self):
+        sys.stdout, sys.stderr = self.stdout, self.stderr
         await self.bot.shutdown()
 
     def info_embed(self):
@@ -75,7 +82,4 @@ def setup(bot):
     if os.environ.get("BOT_ENV", "") != "staging":
         return
 
-    cog = Stage(bot)
-    bot.add_cog(cog)
-
-    sys.stdout = sys.stderr = ForwardOutput(cog.bot)
+    bot.add_cog(Stage(bot))

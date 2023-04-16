@@ -1,4 +1,4 @@
-name: "Security"
+name: Security
 
 on:
   push:
@@ -7,9 +7,6 @@ on:
     branches: [master]
   schedule:
     - cron: "0 8 * * 1"
-
-env:
-  environment: "${{ github.ref == 'refs/heads/master' && 'Production' || 'Dev' }}"
 
 jobs:
   codeql:
@@ -65,3 +62,31 @@ jobs:
         if: always()
         with:
           sarif_file: "trivy-results.sarif"
+
+  bandit:
+    name: Bandit Static Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Bandit Security Scan
+        uses: ioggstream/bandit-report-artifacts@v1.7.4
+
+  safety:
+    name: Safety Dependency Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.10"
+
+      - name: Install safety
+        run: pip install safety
+
+      - name: Safety Scan
+        run: safety check --stdin < requirements.txt
