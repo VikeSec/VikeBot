@@ -2,6 +2,7 @@ from datetime import datetime
 
 import discord
 import requests
+from discord.commands import SlashCommandGroup
 from discord.ext import commands
 
 from .utils.ctftimeapiutils import fetch_event_details, fetch_upcoming_events
@@ -11,64 +12,50 @@ class CFTTime(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.group()
-    async def ctftime(self, ctx):
-        # Default command that shows a list of subcommands
-        if ctx.invoked_subcommand is None:
-            embed = discord.Embed(title="CTFTime Commands", color=discord.Color.blue())
-            embed.add_field(
-                name="upcoming", value="Show upcoming CTF events.", inline=False
-            )
-            embed.add_field(
-                name="details [event_id]",
-                value="Show details of a CTF event with the specified ID.",
-                inline=False,
-            )
-            await ctx.send(embed=embed)
+    ctftime = SlashCommandGroup("ctftime", "CTFTime commands")
 
-    @ctftime.command()
+    @ctftime.command(description="Show next 5 upcoming CTFTime events")
     async def upcoming(self, ctx):
         # Get 5 upcoming events
         try:
             events = fetch_upcoming_events(5)
         except requests.exceptions.HTTPError as ex:
             print(f"An error occurred when fetching event info: {ex}")
-            ctx.send("Sorry, I'm having trouble fetching the upcoming events.")
+            ctx.respond("Sorry, I'm having trouble fetching the upcoming events.")
             return
 
         # Create an embed for each event
+        embeds = []
         for event in events:
             embed = discord.Embed(title=event["title"], color=discord.Color.blue())
 
-            # Convert start time to localtime
-            utctime = datetime.fromisoformat(event["start"])
-            localtime = utctime.astimezone()
-            formatted_time = localtime.strftime(f"%B %d %-l:%M%p")
+            # Format start time
+            utctime = int(datetime.fromisoformat(event["start"]).timestamp())
+            formatted_start_time = f"<t:{utctime}:f>"
 
-            embed.add_field(name="Start time", value=formatted_time, inline=False)
+            embed.add_field(name="Start time", value=formatted_start_time, inline=False)
             embed.add_field(name="Website", value=event["url"], inline=False)
             embed.add_field(name="Event id", value=event["id"], inline=False)
-            await ctx.send(embed=embed)
+            embeds.append(embed)
+        await ctx.respond(embeds=embeds)
 
-    @ctftime.command()
+    @ctftime.command(description="Show detailed information for an event with the given id")
     async def details(self, ctx, event_id: int):
         try:
             event = fetch_event_details(event_id)
         except requests.exceptions.HTTPError as ex:
             print(f"An error occurred when fetching event info: {ex}")
-            ctx.send(
+            ctx.respond(
                 "Sorry, I'm having trouble fetching the details for this event. Are you sure this is a valid event id?"
             )
             return
 
-        # Convert start time to localtime
-        utctime = datetime.fromisoformat(event["start"])
-        localtime = utctime.astimezone()
-        formatted_start_time = localtime.strftime(f"%B %d %-l:%M%p")
-        # Convert finish time to localtime
-        utctime = datetime.fromisoformat(event["finish"])
-        localtime = utctime.astimezone()
-        formatted_finish_time = localtime.strftime(f"%B %d %-l:%M%p")
+        # Format times
+        utctime = int(datetime.fromisoformat(event["start"]).timestamp())
+        formatted_start_time = f"<t:{utctime}:f>"
+        
+        utctime = int(datetime.fromisoformat(event["finish"]).timestamp())
+        formatted_finish_time = f"<t:{utctime}:f>"
         # Format duration
         formatted_duration = (
             f'{event["duration"]["days"]} days {event["duration"]["hours"]} hours'
@@ -98,10 +85,12 @@ class CFTTime(commands.Cog):
         embed.add_field(name=f"Format", value=event["format"])
         embed.add_field(name=f"Participants", value=str(event["participants"]))
         embed.add_field(name=f"CTFtime URL", value=event["ctftime_url"])
-        embed.add_field(name=f"Location", value=event["location"])
-        embed.add_field(name=f"Live feed", value=event["live_feed"])
+        if (event["location"]):
+            embed.add_field(name=f"Location", value=event["location"])
+        if (event["live_feed"]):
+            embed.add_field(name=f"Live feed", value=event["live_feed"])
         embed.add_field(name=f"Public votable", value=str(event["public_votable"]))
-        await ctx.send(embed=embed)
+        await ctx.respond(embed=embed)
 
 
 def setup(bot):

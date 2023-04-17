@@ -1,13 +1,11 @@
 import requests
 
-import config
-
 baseurl = "https://ctftime.org/api/v1/"
-
+USER_AGENT_HEADER = "VikeBot"
 
 def fetch_event_details(event_id):
     url = baseurl + "events/" + str(event_id) + "/"
-    headers = {"user-agent": config.user_agent}
+    headers = {"user-agent": USER_AGENT_HEADER}
 
     response = requests.get(url, headers=headers)
     response.raise_for_status()  # Throws exception when code >= 400
@@ -18,7 +16,7 @@ def fetch_event_details(event_id):
 def fetch_upcoming_events(num_events):
     url = baseurl + "events/"
     params = {"limit": str(num_events)}
-    headers = {"user-agent": config.user_agent}
+    headers = {"user-agent": USER_AGENT_HEADER}
 
     response = requests.get(url, params=params, headers=headers)
     response.raise_for_status()  # Throws exception when code >= 400
