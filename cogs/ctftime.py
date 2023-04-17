@@ -39,7 +39,9 @@ class CFTTime(commands.Cog):
             embeds.append(embed)
         await ctx.respond(embeds=embeds)
 
-    @ctftime.command(description="Show detailed information for an event with the given id")
+    @ctftime.command(
+        description="Show detailed information for an event with the given id"
+    )
     async def details(self, ctx, event_id: int):
         try:
             event = fetch_event_details(event_id)
@@ -53,7 +55,7 @@ class CFTTime(commands.Cog):
         # Format times
         utctime = int(datetime.fromisoformat(event["start"]).timestamp())
         formatted_start_time = f"<t:{utctime}:f>"
-        
+
         utctime = int(datetime.fromisoformat(event["finish"]).timestamp())
         formatted_finish_time = f"<t:{utctime}:f>"
         # Format duration
@@ -85,9 +87,9 @@ class CFTTime(commands.Cog):
         embed.add_field(name=f"Format", value=event["format"])
         embed.add_field(name=f"Participants", value=str(event["participants"]))
         embed.add_field(name=f"CTFtime URL", value=event["ctftime_url"])
-        if (event["location"]):
+        if event["location"]:
             embed.add_field(name=f"Location", value=event["location"])
-        if (event["live_feed"]):
+        if event["live_feed"]:
             embed.add_field(name=f"Live feed", value=event["live_feed"])
         embed.add_field(name=f"Public votable", value=str(event["public_votable"]))
         await ctx.respond(embed=embed)

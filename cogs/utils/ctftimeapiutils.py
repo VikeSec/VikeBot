@@ -3,6 +3,7 @@ import requests
 baseurl = "https://ctftime.org/api/v1/"
 USER_AGENT_HEADER = "VikeBot"
 
+
 def fetch_event_details(event_id):
     url = baseurl + "events/" + str(event_id) + "/"
     headers = {"user-agent": USER_AGENT_HEADER}
