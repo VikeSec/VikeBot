@@ -28,6 +28,7 @@ class CFTTime(commands.Cog):
         embeds = []
         for event in events:
             embed = discord.Embed(title=event["title"], color=consistentHash(event["id"]))
+            embed.set_thumbnail(url=event["logo"])
 
             embed.add_field(name="Start", value=ISOToHammerTime(event["start"]))
             embed.add_field(name="Finish", value=ISOToHammerTime(event["finish"]))
