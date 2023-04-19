@@ -65,7 +65,7 @@ class CFTTime(commands.Cog):
 
         embed.add_field(name="Start", value=ISOToHammerTime(event["start"]))
         embed.add_field(name="Finish", value=ISOToHammerTime(event["finish"]))
-        embed.add_field(name="Weight", value=event["weight"])
+        embed.add_field(name="Weight", value=str(int(event["weight"])))
         embed.add_field(name="CTF Website", value=event["url"])
         embed.add_field(name="CTFtime", value=f'[{event["id"]}]({event["ctftime_url"]})')
         embed.add_field(name=f"Organizer", value=organizer)
