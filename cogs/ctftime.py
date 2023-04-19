@@ -33,7 +33,7 @@ class CFTTime(commands.Cog):
             embed.add_field(name="Start", value=ISOToHammerTime(event["start"]))
             embed.add_field(name="Finish", value=ISOToHammerTime(event["finish"]))
             embed.add_field(name="", value="") # Empty field to make two columns
-            embed.add_field(name="CTF Website", value=event["url"])
+            embed.add_field(name="Website", value=f'[CTFd]({event["url"]})')
             embed.add_field(name="CTFtime", value=f'[{event["id"]}]({event["ctftime_url"]})')
             embed.add_field(name="", value="") # Empty field to make the rows the same length
 
@@ -61,14 +61,12 @@ class CFTTime(commands.Cog):
         )
         embed.set_thumbnail(url=event["logo"])
 
-        # Format organizer
-        organizer = f'[{event["organizers"][0]["name"]}](https://ctftime.org/team/{event["organizers"][0]["id"]})'
-
         embed.add_field(name="Start", value=ISOToHammerTime(event["start"]))
         embed.add_field(name="Finish", value=ISOToHammerTime(event["finish"]))
         embed.add_field(name="Weight", value=str(int(event["weight"])))
-        embed.add_field(name="CTF Website", value=event["url"])
+        embed.add_field(name="Website", value=f'[CTFd]({event["url"]})')
         embed.add_field(name="CTFtime", value=f'[{event["id"]}]({event["ctftime_url"]})')
+        organizer = f'[{event["organizers"][0]["name"]}](https://ctftime.org/team/{event["organizers"][0]["id"]})'
         embed.add_field(name=f"Organizer", value=organizer)
         embed.add_field(name=f"Restrictions", value=event["restrictions"])
         embed.add_field(name=f"Format", value=event["format"])
