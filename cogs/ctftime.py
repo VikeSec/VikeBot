@@ -27,18 +27,24 @@ class CFTTime(commands.Cog):
         # Create an embed for each event
         embeds = []
         for event in events:
-            embed = discord.Embed(title=event["title"], color=consistentHash(event["id"]))
+            embed = discord.Embed(
+                title=event["title"], color=consistentHash(event["id"])
+            )
             embed.set_thumbnail(url=event["logo"])
 
             embed.add_field(name="Start", value=ISOToHammerTime(event["start"]))
             embed.add_field(name="Finish", value=ISOToHammerTime(event["finish"]))
-            embed.add_field(name="", value="") # Empty field to make two columns
+            embed.add_field(name="", value="")  # Empty field to make two columns
             embed.add_field(name="Website", value=f'[CTFd]({event["url"]})')
-            embed.add_field(name="CTFtime", value=f'[{event["id"]}]({event["ctftime_url"]})')
-            embed.add_field(name="", value="") # Empty field to make the rows the same length
+            embed.add_field(
+                name="CTFtime", value=f'[{event["id"]}]({event["ctftime_url"]})'
+            )
+            embed.add_field(
+                name="", value=""
+            )  # Empty field to make the rows the same length
 
             embeds.append(embed)
-        
+
         await ctx.respond(embeds=embeds)
 
     @ctftime.command(
@@ -57,7 +63,7 @@ class CFTTime(commands.Cog):
         embed = discord.Embed(
             title=event["title"],
             description=event["description"],
-            color=consistentHash(event["id"])
+            color=consistentHash(event["id"]),
         )
         embed.set_thumbnail(url=event["logo"])
 
@@ -65,7 +71,9 @@ class CFTTime(commands.Cog):
         embed.add_field(name="Finish", value=ISOToHammerTime(event["finish"]))
         embed.add_field(name="Weight", value=str(int(event["weight"])))
         embed.add_field(name="Website", value=f'[CTFd]({event["url"]})')
-        embed.add_field(name="CTFtime", value=f'[{event["id"]}]({event["ctftime_url"]})')
+        embed.add_field(
+            name="CTFtime", value=f'[{event["id"]}]({event["ctftime_url"]})'
+        )
         organizer = f'[{event["organizers"][0]["name"]}](https://ctftime.org/team/{event["organizers"][0]["id"]})'
         embed.add_field(name=f"Organizer", value=organizer)
         embed.add_field(name=f"Restrictions", value=event["restrictions"])
@@ -73,14 +81,17 @@ class CFTTime(commands.Cog):
         embed.add_field(name=f"Participants", value=str(event["participants"]))
         await ctx.respond(embed=embed)
 
+
 def consistentHash(txt):
     return int(hex(hash(str(txt)))[3:9], 16)
+
 
 # Convert a string from ISO format to HammerTime format
 def ISOToHammerTime(time):
     utctime = int(datetime.fromisoformat(time).timestamp())
     formatted_time = f"<t:{utctime}:f>"
     return formatted_time
+
 
 def setup(bot):
     bot.add_cog(CFTTime(bot))
