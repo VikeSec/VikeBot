@@ -59,9 +59,11 @@ class CFTTime(commands.Cog):
         utctime = int(datetime.fromisoformat(event["finish"]).timestamp())
         formatted_finish_time = f"<t:{utctime}:f>"
         # Format duration
-        formatted_duration = (
-            f'{event["duration"]["days"]} days {event["duration"]["hours"]} hours'
-        )
+        formatted_duration = ""
+        if event["duration"]["days"] > 0:
+            formatted_duration += f'{event["duration"]["days"]} days '
+        if event["duration"]["hours"] > 0:
+            formatted_duration += f'{event["duration"]["hours"]} hours'
 
         embed = discord.Embed(
             title=event["title"],
