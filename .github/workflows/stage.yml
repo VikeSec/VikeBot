@@ -18,6 +18,7 @@ jobs:
     concurrency:
       group: "stage"
       cancel-in-progress: true
+    if: github.repository_owner == 'VikeSec'
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
