@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
-
-from pyston import PystonClient, File
+from pyston import File, PystonClient
 from pyston.exceptions import *
 
 
