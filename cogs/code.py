@@ -10,7 +10,6 @@ class Code(commands.Cog):
 
     @discord.message_command(description="Execute code")
     async def execute(self, ctx, message: discord.Message):
-
         code_blocks = get_code_blocks_with_languages(message.content)
         if len(code_blocks) == 0:
             ctx.respond(
@@ -41,7 +40,7 @@ class Code(commands.Cog):
 
 async def execute_code(language, code):
     client = PystonClient()
-    
+
     language = convert_language_alias(language)
 
     # Check if language is valid
