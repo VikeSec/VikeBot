@@ -11,10 +11,6 @@ class Code(commands.Cog):
     @discord.message_command(description="Execute code")
     async def execute(self, ctx, message: discord.Message):
         code_blocks = get_code_blocks_with_languages(message.content)
-        if len(code_blocks) == 0:
-            ctx.respond(
-                "This command must be used on a message containing a code block"
-            )
 
         responses = []
         for block in code_blocks:
@@ -32,6 +28,11 @@ class Code(commands.Cog):
 
             responses.append(
                 f'```{block["language"]}\n{block["code"]}```\n```{str(result)}```'
+            )
+
+        if len(responses) == 0:
+            ctx.respond(
+                "This command must be used on a message containing a code block with a language specified"
             )
 
         response = "\n".join(responses)
@@ -56,11 +57,7 @@ async def execute_code(language, code):
 # Get code blocks and languages from a message string
 def get_code_blocks_with_languages(txt):
     result = []
-
     blocks = txt.split("```")
-    if len(blocks) < 3:
-        return result
-
     i = 1
     while i < len(blocks) - 1:
         lang_and_code = blocks[i].split("\n", 1)
