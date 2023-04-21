@@ -10,28 +10,26 @@ class Code(commands.Cog):
 
     @discord.message_command(description="Execute code")
     async def execute(self, ctx, message: discord.Message):
+        await ctx.defer()  # Allow response to take longer than 3 seconds
+
         code_blocks = get_code_blocks_with_languages(message.content)
 
         responses = []
         for block in code_blocks:
             try:
-                result = await execute_code(block["language"], block["code"])
+                output = await execute_code(block["language"], block["code"])
+                result = f"```{str(output)}```"
             except InvalidLanguage:
-                await ctx.respond("Invalid language")
-                return
+                result = "Invalid language"
             except TooManyRequests:
-                await ctx.respond("Too many requests. Please slow down")
-                return
+                result = "Too many requests. Please slow down"
             except (ExecutionError, InternalServerError, UnexpectedError):
-                await ctx.respond("An unknown error has occured ¯\_(ツ)_/¯")
-                return
+                result = "An unknown error has occured ¯\_(ツ)_/¯"
 
-            responses.append(
-                f'```{block["language"]}\n{block["code"]}```\n```{str(result)}```'
-            )
+            responses.append(f'```{block["language"]}\n{block["code"]}```{result}')
 
         if len(responses) == 0:
-            ctx.respond(
+            await ctx.respond(
                 "This command must be used on a message containing a code block with a language specified"
             )
 
